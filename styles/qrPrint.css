@@ -1,0 +1,35 @@
+@media print {
+  * { margin: 0 !important; padding: 0 !important; }
+  #controls, .footer, .footerarea{ display: none; }
+  html, body {
+    /*changing width to 100% causes huge overflow and wrap*/
+    height:100%; 
+    overflow: hidden;
+    background: #FFF; 
+    font-size: 9.5pt;
+  }
+	.navbar, .jumbotron, .text-muted, input, textarea, #qrInput, label, h2, #qrAdd, .qr_message, .qrEncode, footer, .counter, .instructions{
+		display:none;
+	}
+	.qrdesc{
+		display:block;
+		clear:both;
+		border-bottom:1px dashed silver;
+		margin-bottom:2em;
+		width:auto;
+	}
+	.right{
+		float:right;
+	}
+	.left{
+		/*float:left;*/
+		border:1px solid red;
+	}
+  .template { width: auto; left:0; top:0; }
+  img { float:left; }
+  li { margin: 0 0 10px 20px !important;}
+}
+.para {
+    font-size:x-large;
+    height:3000px;
+}

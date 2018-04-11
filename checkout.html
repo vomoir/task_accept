@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="tony edwards">
+        <title>Task Accepted</title>
+        <!-- Bootstrap core CSS -->
+        <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+        <!-- Custom styles for this template -->
+        <link href="form-validation.css" rel="stylesheet">
+        <link href="styles/qrPrint.css" rel="stylesheet"/>
+        <script src="assets/js/qrcode.js"></script>
+
+    </head>
+    <body class="bg-light">
+        <div class="container">
+            <div class="py-5 text-center">
+                <img class="d-block mx-auto mb-4" src="logo1.png" alt="" width="372">
+                <h2>Task Notification</h2>
+                <p class="lead">Create a QR code for Task Notification registration. The QR Code is then scanned by the student using the TN App (Android only) and their acknowledgement of the task is registered in the Task Database.</p>
+            </div>
+            <div class="row">
+                <div class="order-md-1 col-md-8">
+                    <h4 class="mb-3">Step 1:</h4>
+                    <p>Select Task from list or enter new task name</p>
+                    <!--form class="needs-validation" novalidate-->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="firstName">Task</label>
+                                <select id="tasks_list" class="form-control" onchange="getTaskData($('#tasks_list').find(':selected').val())">
+                                    <option value="0">Select task...</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="lastName">New Task</label>
+                                <input id="taskName" type="text" class="form-control" placeholder="Enter new task name" value="" />
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <h4 class="mb-3">Step 2:</h4>
+                            <label for="taskLinks">Enter any links associated with the task</label>
+                            <input id="taskLinks" type="text" class="form-control" placeholder="http://www.google.com" />
+                            <div id="linkTest">
+                                <p>(Link can be tested here - opens new tab)</p>
+                            </div>
+
+                        </div>
+                        <div class="mb-3"> 
+                            <h4 class="mb-3">Step 3:</h4>
+                            <label for="email">Select the year group</label>                             
+                            <select id="taskYear" class="form-control">
+                                <option value="0">--Select--</option>
+                                <option value="7">Year 7</option>
+                                <option value="8">Year 8</option>
+                                <option value="9">Year 9</option>
+                                <option value="10">Year 10</option>
+                                <option value="11">Year 11</option>
+                                <option value="12">Year 12</option>
+                            </select>                             
+                        </div>
+                        <div class="mb-3">
+                            <h4 class="mb-3">Step 4:</h4>
+                        </div>
+                        <button onclick="update_qrcode();" class="btn btn-primary btn-lg btn-block" type="submit">QR Code Me!</button>
+                    <!--/form-->
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group vertical-align" id="qr"></div>
+                </div>
+            </div>
+            <footer class="my-5 pt-5 text-muted text-center text-small">
+                <p class="mb-1">© 2018 VomSoft</p>
+                <ul class="list-inline">
+                    <li class="list-inline-item">
+                        <a href="#">Privacy</a>
+                    </li>
+                    <li class="list-inline-item">
+                        <a href="#">Terms</a>
+                    </li>
+                    <li class="list-inline-item">
+                        <a href="#">Support</a>
+                    </li>
+                </ul>
+            </footer>
+        </div>
+        <!-- Bootstrap core JavaScript
+    ================================================== -->
+        <!-- Placed at the end of the document so the pages load faster -->
+        <script src="assets/js/jquery.min.js"></script>
+        <script src="assets/js/popper.js"></script>
+        <script src="bootstrap/js/bootstrap.min.js"></script>
+        <script src="assets/js/steg.js"></script>
+        <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+        <script src="assets/js/ie10-viewport-bug-workaround.js"></script>
+    </body>
+</html>

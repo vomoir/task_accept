@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <meta name="description" content="Back-end processing of Task Notification QR scanner"/>
+        <meta name="author" content="Tony Edwards">
+		<title>Task Notification</title>
+		<link href="styles/form.css" rel="stylesheet"/>
+		<link href="styles/qrPrint.css" rel="stylesheet"/>
+        <script src="assets/js/qrcode.js"></script>
+
+    </head>
+    <body>
+		<!-- ######################################################################### -->
+        <!-- Wrap all page content here -->
+        <div id="wrap">
+            <!-- Fixed navbar -->
+            <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+                <div class="container">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="#">Task Notification</a>
+                    </div>
+                    <div class="collapse navbar-collapse">
+                        <ul class="nav navbar-nav">
+                            <li class="active">
+                                <a href="index.html">Task QR</a>
+                            </li>
+                            <li>
+                                <a href="#about">About</a>
+                            </li>
+                        </ul>
+                    </div>
+					<form class="form1" action="">
+						<label for="firstName" class="first-name">First Name</label>
+						<input id="firstName" type="text">
+			
+						<label for="lastName" class="last-name">Last Name</label>
+						<input id="lastName" type="text">
+			
+						<label for="job">Job</label>
+						<input id="job" type="text">
+			
+						<label for="age">Age</label>
+						<input id="age" type="text">
+			
+						<label for="email">Email</label>
+						<input id="email" type="email">
+			
+						<button>Submit</button>
+					</form>
+					<!--/.nav-collapse -->
+                </div>
+            </div>
+				<!-- FOOTER -->
+				<footer>
+					<p>© 2017 vomSoft. · <a href="#">Privacy</a> · <a href="#">Terms</a></p>
+				</footer>
+			</div>
+		</div>
+        <!-- /.container -->
+        <!-- Bootstrap core JavaScript
+    ================================================== -->
+        <!-- Placed at the end of the document so the pages load faster -->
+        <script src="assets/js/jquery.min.js"></script>
+        <script src="assets/js/steg.js"></script>
+
+		<script type="text/javascript" src="assets/js/jquery.charactercounter.js"></script>
+		<script>
+			$(function(){
+				$("#qrInput").characterCounter({limit: '200', counterFormat: '%1 characters remaining.'});
+			});
+		</script>
+    </body>
+</html>
