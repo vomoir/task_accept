@@ -16,18 +16,23 @@ $(document).ready(function () {
 			});
 		} // End if
 	});
-
-	$.ajax({
-		url: "tasks_get_list.php",
-		cache: false,
-		success: function(html){
-			console.log(html);
-			$("#tasks_list").append(html);
-		}
-	});
+	updateTaskList();
 	
 });
-
+function updateTaskList(){
+	var jqXhr = $.ajax({
+		url: "tasks_get_list.php",
+		cache: false
+	});
+	jqXhr.done(function(data){
+		$("#tasks_list").empty();
+		$("#tasks_list").append("<option>--Select task--</option>");
+		$("#tasks_list").append(data);			
+	})
+	.fail(function(xhr){
+		console.log("error: ", xhr);
+	});
+}
 var create_qrcode = function(text, typeNumber, errorCorrectLevel, table) {
 
 	var qr = qrcode(typeNumber || 10, errorCorrectLevel || 'L');
@@ -38,38 +43,42 @@ var create_qrcode = function(text, typeNumber, errorCorrectLevel, table) {
 	return qr.createImgTag();
 };
 
+function saveNewTask(){
+	var taskName =  $('#taskName').val();
+	var task_year = $('#taskYear').val();
+	var task_link = $('#taskLinks').val();
+	let qrTask = new QrTask(0, taskName, task_year, task_link);
+
+	console.log("Task name = " + qrTask.getTaskName());
+	qrTask.saveNewTask();
+	//put the new class in the global scope so we can 
+	//generate QR code.
+	var global = window || global;
+	global.qrTask = qrTask;
+	//display the QR code for the newly instanciated class
+	update_qrcode();
+	updateTaskList();
+}
+
 var update_qrcode = function() {
-	//alert("Creating QR...");
-	var taskName = $('#taskName').val();
+
+	var taskName = qrTask.getTaskName();
 	var taskNameUri = "taskname=" + taskName;
 
-	var taskYear = $('#taskYear').val();
+	var taskYear = qrTask.getTaskYear();
 	var taskYearUri = "&year=" + taskYear;
 
-	var taskLinks = encodeURI($('#taskLinks').val());
-	//Task links (web resources for the task) is optional
-	//var taskLinks = "";
-	//https://mncatholic-my.sharepoint.com/personal/tony_edwards_mn_catholic_edu_au/_layouts/OneNote.aspx?id=%2Fpersonal%2Ftony_edwards_mn_catholic_edu_au%2FDocuments%2FClass%20Notebooks%2F11_SDD_2017&wd=target%28_Content%20Library%2FAssessments.one%7C199D0074-5298-460B-8499-0B324E98092D%2FHSC%20Task%201%7C859E2C44-87C3-43DB-A1F6-9654EDF0543A%2F%29 onenote:https://mncatholic-my.sharepoint.com/personal/tony_edwards_mn_catholic_edu_au/Documents/Class%20Notebooks/11_SDD_2017/_Content%20Library/Assessments.one#HSC%20Task%201&section-id={199D0074-5298-460B-8499-0B324E98092D}&page-id={859E2C44-87C3-43DB-A1F6-9654EDF0543A}&end
-	if(taskLinks.length > 0){
-		var shortLink = makeshort(taskLinks, 6);
-		var tasklinkId = saveTaskLink(taskName, taskYear, taskLinks, shortLink);
-		//tasklinkId returning as 'undefined' because of asynchronous nature of ajax call
-		//console.log("new tasklink id = " + tasklinkId);
-		taskLinks = "&tasklinks=" + shortLink;	
-		//$.get("http://tinyurl.com/api-create.php?url=" + taskLinks , function(shorturl){
-		//	alert(shorturl)
-		//});		
-	}
+	var taskLinks = encodeURI(qrTask.getTaskLink());
+	taskLinks = "&tasklinks=" + qrTask.getTaskShortLinkURL();	
 	
 	$("#qrLabel").val(taskName);
 
 	$.post("iptest.php",
 	    function(taskName, data){
-			alert("Data: " + data + "\nStatus: " + status);
+			//alert("Data: " + data + "\nStatus: " + status);
 			console.log("Server IP address = " + data);
 		}
 	);
-
 	
 	var text = "http://10.145.165.220/task_accepted/index.php?";
 	text += taskNameUri + taskLinks + taskYearUri;
@@ -105,64 +114,23 @@ function embed_qrcode(){
 	result = embedImage(mainImage, qrImage);
 }
 
-function makeshort(longString, idLen){
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-    for( var i=0; i < idLen - 1; i++ ){
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-	}
-    return text;
-}
-
-function saveTaskLink(taskName, school_year,  longLink, shortLink){
-	var msg = "";
-	console.log("school year = " + school_year);
-	$.ajax({
-		url: "savetasklinks.php",
-		cache: false,
-		type: 'POST',
-		data: {'long_link': longLink, 'short_link': shortLink, 'task_name': taskName, 'school_year': school_year},
-		success: function(resp) {
-			console.log("\n\nsaveTaskLinks: resp = " + resp);
-			console.log("school year after ajax = " + school_year);
-			//taskName = resp.split(",")[1];
-			linkId = resp.split(",")[0];
-			//school_year = resp.split(",")[2];
-			saveTask(taskName, linkId, school_year);										
-		},
-		error: function(xhr, textStatus, error){
-			displayMessage( "Error deleting data: " + error ); 
-		}
-	});
-/*
-	$.post("savetasklinks.php",{
-        long_link: longLink,
-		short_link: shortLink,
-		task_name: taskName
-    },
-    function(taskName, data){
-		//alert("Data: " + data + "\nStatus: " + status);
-		console.log("Task link added. Link id = " + data + "\n calling saveTask(" + taskName + ", \n" + data);
-		saveTask(taskName, data[0]);
-    });
-*/
-}
-function saveTask(taskName, linkId, school_year){
-	$.post("savetask.php",{
-	   task_name: taskName,
-	   task_link_id: linkId,
-	   school_year: school_year
-   },
-   function(data, status){
-	   alert("Data: " + data + "\nStatus: " + status);
-   });
+function newTask(){
+	//let qrTask = new QrTask(taskId, taskName, task_year, task_link);
+	$('#tasks_list').val(0);
+	$('#taskName').val("");
+	$('#taskLinks').val("");
+	$('#taskYear').val("");
+	$('#linkTest').wrap(function() {
+		var link = $('<a/>');
+		link.attr('href', "#");
+		link.attr('target','_blank');
+		return link;
+	 });
 }
 
 function getTaskData(taskId){
 	console.log("Task Id = " + taskId);
-	var qrTask = new QrTask("Task Fred",9,"http://vomoir.com/vertalert");
-	console.log("Task name = " + qrTa)
 	if(taskId > 0){
 		//alert(projId);
 		$.ajax({
@@ -174,25 +142,28 @@ function getTaskData(taskId){
 			success: function(xml) {
 				console.log(xml);
 				$(xml).find('task_detail').each(function(){
-					//var nName = this.nodeName;
-					//alert("Node Name = " + nName);
 					var taskName = $(this).find("task").text();
-					$('#taskName').val(taskName);
 					var task_link = $(this).find("task_link").text()
-					$('#taskLinks').val(task_link);
+					var task_year = $(this).find("task_year").text();
+
+					let qrTask = new QrTask(taskId, taskName, task_year, task_link);
+					$('#taskName').val(qrTask.getTaskName());
+					$('#taskLinks').val(qrTask.getTaskLink());
+					$('#taskYear').val(qrTask.getTaskYear());
 					$('#linkTest').wrap(function() {
 						var link = $('<a/>');
-						link.attr('href', task_link);
+						link.attr('href', qrTask.getTaskLink());
 						link.attr('target','_blank');
-						//link.text($(this).text());
 						return link;
 					 });
-					var task_year = $(this).find("task_year").text();
-					console.log(task_year);
-					$('#taskYear').val(task_year);
-					//Need to generate the QR Code for the retrieved
-					//task lest we create a duplicate record if
-					//we want to see the code.
+
+					console.log("Task name = " + qrTask.getTaskName());
+					//put the new class in the global scope so we can 
+					//generate QR code.
+					var global = window || global;
+					global.qrTask = qrTask;
+					//display the QR code for the newly instanciated class
+					update_qrcode();
 				});
 			},
 			error: function(xhr, textStatus, error){
